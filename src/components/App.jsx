@@ -1,4 +1,3 @@
-import { Component } from 'react';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { getImages } from '../services/API.js';
@@ -6,20 +5,8 @@ import { LoadMoreButton } from './LoadMoreButton/LoadMoreButton';
 import { Modal } from './Modal/Modal';
 import { Loader } from './Loader/Loader';
 import { useState } from 'react';
-import { useEffect } from 'react';
-
-// };
 
 export const App = () => {
-  // state = {
-  //   images: [],
-  //   searchQuery: '',
-  //   isLoading: false,
-  //   page: 1,
-  //   selectedImageURL: '',
-  //   isModalOpen: false,
-  // };
-
   const [images, setImages] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -33,10 +20,6 @@ export const App = () => {
     setSearchQuery(e.target.searchQuery.value);
     setImages(await getImages(e.target.searchQuery.value));
     setIsLoading(false);
-  };
-
-  const handleChange = e => {
-    this.setState({ searchQuery: e.target.value });
   };
 
   const handleLoadMore = async (e, prevState) => {
