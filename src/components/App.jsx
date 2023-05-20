@@ -5,89 +5,85 @@ import { getImages } from '../services/API.js';
 import { LoadMoreButton } from './LoadMoreButton/LoadMoreButton';
 import { Modal } from './Modal/Modal';
 import { Loader } from './Loader/Loader';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 // };
 
-export class App extends Component {
-  state = {
-    images: [],
-    searchQuery: '',
-    isLoading: false,
-    page: 1,
-    selectedImageURL: '',
-    isModalOpen: false,
-  };
+export const App = () => {
+  // state = {
+  //   images: [],
+  //   searchQuery: '',
+  //   isLoading: false,
+  //   page: 1,
+  //   selectedImageURL: '',
+  //   isModalOpen: false,
+  // };
 
-  async componentDidMount() {}
-  handleSubmit = async e => {
+  const [images, setImages] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [selectedImageURL, setSelectedImageURL] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSubmit = async e => {
     e.preventDefault();
-    this.setState({ isLoading: true });
-    this.setState({
-      searchQuery: e.target.searchQuery.value,
-      images: await getImages(e.target.searchQuery.value),
-      isLoading: false,
-    });
+    setIsLoading(true);
+    setSearchQuery(e.target.searchQuery.value);
+    setImages(await getImages(e.target.searchQuery.value));
+    setIsLoading(false);
   };
 
-  handleChange = e => {
+  const handleChange = e => {
     this.setState({ searchQuery: e.target.value });
   };
 
-  handleLoadMore = async (e, prevState) => {
-    const appendImages = await getImages(
-      this.state.searchQuery,
-      this.state.page + 1
-    );
-    this.setState(prevState => {
-      return {
-        page: prevState.page + 1,
-        images: [...prevState.images, ...appendImages],
-      };
-    });
+  const handleLoadMore = async (e, prevState) => {
+    const appendImages = await getImages(searchQuery, page + 1);
+    setPage(page + 1);
+    setImages([...images, ...appendImages]);
   };
 
-  handleImageClick = largeImageURL => {
-    this.setState({ selectedImageURL: largeImageURL, isModalOpen: true });
+  const handleImageClick = largeImageURL => {
+    setSelectedImageURL(largeImageURL);
+    setIsModalOpen(true);
   };
 
-  handleModalClose = e => {
-    this.setState({ isModalOpen: false });
+  const handleModalClose = e => {
+    setIsModalOpen(false);
   };
 
-  handleEscape = e => {
+  const handleEscape = e => {
     if (e.key === 'Escape') {
-      this.setState({ isModalOpen: false });
-      console.log(e.keyCode);
+      setIsModalOpen(false);
     }
   };
-  render() {
-    return (
-      <div>
-        <Searchbar handleSubmit={this.handleSubmit}></Searchbar>
-        {this.state.isLoading ? (
-          <Loader></Loader>
-        ) : (
-          <div>
-            <ImageGallery
-              images={this.state.images}
-              handleImageClick={this.handleImageClick}
-            ></ImageGallery>
 
-            {this.state.images.length ? (
-              <LoadMoreButton
-                handleLoadMore={this.handleLoadMore}
-              ></LoadMoreButton>
-            ) : null}
-          </div>
-        )}
-        {this.state.isModalOpen ? (
-          <Modal
-            largeImageURL={this.state.selectedImageURL}
-            handleModalClose={this.handleModalClose}
-            handleEscape={this.handleEscape}
-          ></Modal>
-        ) : null}
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <Searchbar handleSubmit={handleSubmit}></Searchbar>
+      {isLoading ? (
+        <Loader></Loader>
+      ) : (
+        <div>
+          <ImageGallery
+            images={images}
+            handleImageClick={handleImageClick}
+          ></ImageGallery>
+
+          {images.length ? (
+            <LoadMoreButton handleLoadMore={handleLoadMore}></LoadMoreButton>
+          ) : null}
+        </div>
+      )}
+      {isModalOpen ? (
+        <Modal
+          largeImageURL={selectedImageURL}
+          handleModalClose={handleModalClose}
+          handleEscape={handleEscape}
+        ></Modal>
+      ) : null}
+    </div>
+  );
+};
