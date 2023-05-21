@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Overlay, ModalWrapper, ModalImage } from './Modal.styled';
 import PropTypes from 'prop-types';
 export const Modal = ({ largeImageURL, handleModalClose, handleEscape }) => {
+  
   useEffect(() => {
     window.addEventListener('keydown', handleEscape);
     return () => {
